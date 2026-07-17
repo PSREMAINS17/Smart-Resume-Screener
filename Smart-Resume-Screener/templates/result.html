@@ -1,0 +1,405 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- =========================
+         PAGE TITLE
+    ========================== -->
+
+    <div class="page-header">
+
+        <h1>Smart Resume Analysis Dashboard</h1>
+
+        <p>
+            AI-powered ATS analysis of your uploaded resume.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         SCORE CARD
+    ========================== -->
+
+    <div class="score-card">
+
+        <div class="circle">
+            {{ score }}%
+        </div>
+
+        <div class="rating">
+
+            {% if score >= 90 %}
+                ★★★★★
+            {% elif score >= 75 %}
+                ★★★★☆
+            {% elif score >= 60 %}
+                ★★★☆☆
+            {% elif score >= 40 %}
+                ★★☆☆☆
+            {% else %}
+                ★☆☆☆☆
+            {% endif %}
+
+        </div>
+
+        <h2>{{ strength }} Resume</h2>
+
+        <div class="progress">
+
+            <div
+                id="progress-bar"
+                class="progress-bar"
+                data-score="{{ score }}">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DASHBOARD STATS
+    ========================== -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <h4>Overall ATS</h4>
+
+            <h2>{{ breakdown.overall }}%</h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h4>Matched Skills</h4>
+
+            <h2>{{ matched|length }}</h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h4>Missing Skills</h4>
+
+            <h2>{{ missing|length }}</h2>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h4>Resume Rating</h4>
+
+            <h2>{{ strength }}</h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>Resume Summary</h2>
+
+        <p>
+
+            Your resume achieved an ATS score of
+
+            <strong>{{ breakdown.overall }}%</strong>.
+
+            We detected
+
+            <strong>{{ matched|length }}</strong>
+
+            matching skills while
+
+            <strong>{{ missing|length }}</strong>
+
+            skills are still missing.
+
+            Continue improving your resume by including
+            more relevant technical skills,
+            measurable achievements,
+            and well-described projects.
+
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         CHART
+    ========================== -->
+
+    <div class="chart-section">
+
+        <h2>Skill Match Overview</h2>
+
+        <div class="chart-container">
+
+            <canvas id="resumeChart"></canvas>
+
+        </div>
+
+    </div>
+
+        <!-- =========================
+         ATS CATEGORY SCORES
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>ATS Category Scores</h2>
+
+        {% set categories = [
+            ('Skills Match', breakdown.skills),
+            ('Education', breakdown.education),
+            ('Projects', breakdown.projects),
+            ('Experience', breakdown.experience),
+            ('Overall ATS', breakdown.overall)
+        ] %}
+
+        {% for label, value in categories %}
+
+        <div class="category">
+
+            <div class="category-header">
+
+                <span>{{ label }}</span>
+
+                <span>{{ value }}%</span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar ats-progress"
+                    data-width="{{ value }}">
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =========================
+         RESUME COMPLETENESS
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>Resume Completeness</h2>
+
+        <div class="stats-grid">
+
+            {% for section, status in sections.items() %}
+
+            <div class="stat-card">
+
+                <h4>{{ section }}</h4>
+
+                {% if status %}
+
+                    <h3 class="present">✔ Present</h3>
+
+                {% else %}
+
+                    <h3 class="missing-section">✘ Missing</h3>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         STRENGTHS & WEAKNESSES
+    ========================== -->
+
+    <div class="stats-grid">
+
+        <div class="summary-card">
+
+            <h2>Strengths</h2>
+
+            <ul>
+
+                {% for item in strengths %}
+
+                    <li>{{ item }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h2>Weaknesses</h2>
+
+            <ul>
+
+                {% for item in weaknesses %}
+
+                    <li>{{ item }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RECOMMENDATIONS
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>Recommendations</h2>
+
+        <ul>
+
+            {% for item in recommendations %}
+
+                <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+        <!-- =========================
+         MATCHED SKILLS
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>Matched Skills</h2>
+
+        {% if matched %}
+
+        <div class="skills">
+
+            {% for skill in matched %}
+
+            <span class="skill matched">
+
+                {{ skill }}
+
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p>No matching skills found.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         MISSING SKILLS
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>Missing Skills</h2>
+
+        {% if missing %}
+
+        <div class="skills">
+
+            {% for skill in missing %}
+
+            <span class="skill missing">
+
+                {{ skill }}
+
+            </span>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p class="green">
+            Excellent! No missing skills detected.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         GENERAL SUGGESTIONS
+    ========================== -->
+
+    <div class="summary-card">
+
+        <h2>General Suggestions</h2>
+
+        <ul>
+
+            {% for item in suggestions %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+
+    <!-- =========================
+         ACTION BUTTONS
+    ========================== -->
+
+    <div class="button-group">
+
+        <a href="/" class="btn">
+            Analyze Another Resume
+        </a>
+
+        <a href="{{ url_for('static', filename=report_file) }}"
+           class="btn"
+           download>
+
+            Download PDF Report
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

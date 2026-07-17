@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="hero">
+
+    <h1>Smart Resume Screening Tool</h1>
+
+    <p>
+        Upload your resume and compare it with a job description
+        using Natural Language Processing.
+    </p>
+
+</div>
+
+<div class="container">
+
+    <form action="/analyze"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <label>Upload Resume (PDF)</label>
+
+        <div class="upload-box">
+
+            <input
+                type="file"
+                name="resume"
+                accept=".pdf"
+                required>
+
+        </div>
+
+        <label>Job Description</label>
+
+        <textarea
+            name="job_description"
+            rows="10"
+            placeholder="Paste the job description here..."
+            required></textarea>
+        <div id="loader" class="loader"></div>
+        <button type="submit">
+
+            Analyze Resume
+
+        </button>
+
+    </form>
+
+</div>
+
+<div class="features">
+
+    <div class="feature-card">
+
+        <h3>📄 Resume Parsing</h3>
+
+        <p>
+            Extracts text from uploaded PDF resumes.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h3>📊 Match Score</h3>
+
+        <p>
+            Calculates resume similarity using TF-IDF and Cosine Similarity.
+        </p>
+
+    </div>
+
+    <div class="feature-card">
+
+        <h3>🎯 Skill Analysis</h3>
+
+        <p>
+            Finds matched and missing skills automatically.
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

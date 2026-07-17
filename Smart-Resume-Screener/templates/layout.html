@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Smart Resume Screening Tool</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<nav>
+
+    <h1>Smart Resume Screening Tool</h1>
+
+    <button
+        id="darkToggle"
+        class="dark-toggle">
+
+        🌙
+
+    </button>
+
+</nav>
+
+{% block content %}
+
+{% endblock %}
+
+<footer>
+
+    © 2026 Smart Resume Screening Tool |
+    Developed by Prakhar Sachan
+
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
